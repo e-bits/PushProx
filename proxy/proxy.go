@@ -18,7 +18,7 @@ import (
 	"github.com/prometheus/common/promlog"
 	"github.com/prometheus/common/promlog/flag"
 
-	"github.com/robustperception/pushprox/util"
+	"github.com/e-bits/pushprox/util"
 )
 
 var (

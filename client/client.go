@@ -14,16 +14,15 @@ import (
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/ShowMax/go-fqdn"
+	"github.com/e-bits/pushprox/util"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/common/promlog"
 	"github.com/prometheus/common/promlog/flag"
-	"github.com/robustperception/pushprox/util"
 )
 
 var (
-	myFqdn   = kingpin.Flag("fqdn", "FQDN to register with").Default(fqdn.Get()).String()
+	myFqdn   = kingpin.Flag("fqdn", "FQDN to register with including Port.").Required().String()
 	proxyURL = kingpin.Flag("proxy-url", "Push proxy to talk to.").Required().String()
 )
 
@@ -144,6 +143,10 @@ func main() {
 	coordinator := Coordinator{logger: logger}
 	if *proxyURL == "" {
 		level.Error(coordinator.logger).Log("msg", "-proxy-url flag must be specified.")
+		os.Exit(1)
+	}
+	if *myFqdn == "" {
+		level.Error(coordinator.logger).Log("msg", "-fqdn flag must be specified.")
 		os.Exit(1)
 	}
 	level.Info(coordinator.logger).Log("msg", "URL and FQDN info", "proxy_url", *proxyURL, "Using FQDN of", *myFqdn)

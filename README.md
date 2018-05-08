@@ -1,4 +1,4 @@
-# PushProx [![CircleCI](https://circleci.com/gh/RobustPerception/PushProx.svg?style=shield)](https://circleci.com/gh/RobustPerception/PushProx)
+# PushProx
 
 PushProx is a client and proxy that allows transversing of NAT and other
 similar network topologies by Prometheus, while still following the pull model.
@@ -10,10 +10,10 @@ While this is reasonably robust in practice, this is a work in progress.
 First build the proxy and client:
 
 ```
-go get github.com/robustperception/pushprox/{client,proxy}
-cd ${GOPATH-$HOME/go}/src/github.com/robustperception/pushprox/client
+go get github.com/e-bits/pushprox/{client,proxy}
+cd ${GOPATH-$HOME/go}/src/github.com/e-bits/pushprox/client
 go build
-cd ${GOPATH-$HOME/go}/src/github.com/robustperception/pushprox/proxy
+cd ${GOPATH-$HOME/go}/src/github.com/e-bits/pushprox/proxy
 go build
 ```
 
@@ -25,7 +25,7 @@ Run the proxy somewhere both Prometheus and the clients can get to:
 
 On every target machine run the client, pointing it at the proxy:
 ```
-./client --proxy-url=http://proxy:8080/
+./client --proxy-url=http://proxy:8080 --fqdn=client:9100
 ```
 
 In Prometheus, use the proxy as a `proxy_url`:
@@ -51,6 +51,15 @@ so this workaround is required.
 The `/clients` endpoint will return a list of all registered clients in the format
 used by `file_sd_configs`. You could use wget in a cronjob to put it somewhere
 file\_sd\_configs can read and then then relabel as needed.
+
+```
+scrape_configs:
+- job_name: node
+  proxy_url: http://proxy:8080/
+  file_sd_configs:
+    - files:
+      - pushproxclients.json
+```
 
 ## How It Works
 
