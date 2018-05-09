@@ -51,7 +51,7 @@ func main() {
 		if r.URL.Host != "" {
 			ctx, _ := context.WithTimeout(r.Context(), util.GetScrapeTimeout(r.Header))
 			request := r.WithContext(ctx)
-			request.RequestURI = ""
+			// request.RequestURI = ""
 
 			resp, err := coordinator.DoScrape(ctx, request)
 			if err != nil {

@@ -91,7 +91,7 @@ func (c *Coordinator) DoScrape(ctx context.Context, r *http.Request) (*http.Resp
 	select {
 	case <-ctx.Done():
 		return nil, fmt.Errorf("Matching client not found for %q: %s", r.URL.String(), ctx.Err())
-	case c.getRequestChannel(r.Host) <- r:
+	case c.getRequestChannel(r.URL.Host) <- r:
 	}
 
 	respCh := c.getResponseChannel(id)
@@ -114,6 +114,7 @@ func (c *Coordinator) WaitForScrapeInstruction(fqdn string) (*http.Request, erro
 	ch := c.getRequestChannel(fqdn)
 	for {
 		request := <-ch
+		return request, nil
 		select {
 		case <-request.Context().Done():
 			// Request has timed out, get another one.
